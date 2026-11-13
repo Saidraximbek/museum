@@ -28,7 +28,7 @@ export class LockScreen {
             <input 
               type="text" 
               id="datePasswordInput" 
-              placeholder="Masalan: 11-noyabr 2026yil" 
+              placeholder="yozing" 
               autocomplete="off"
             />
             <button type="button" class="btn-lock-submit" id="btnUnlock">
