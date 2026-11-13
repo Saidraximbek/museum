@@ -32,6 +32,15 @@ O'zingiz va sevimli insoningizning eng qadrli fotosuratlarini devorlarga joylash
 
 ---
 
+## 🌐 Barcha qurilmalar uchun rasmlar
+
+Agar siz yuklagan rasmlar boshqa qurilmalarda ham ko'rinishi kerak bo'lsa, `public/gallery-data.json` faylini GitHubga commit qilib, keyin loyiha qayta deploy qilinishi kerak.
+
+- Appda rasm yuklaganingizdan so'ng "🌐 Barcha Qurilmalar Uchun Saqlash" tugmasini bosing.
+- Agar server yozish imkoniyati bo'lmasa, brauzer faylni avtomatik yuklab beradi.
+- Ushbu faylni `public/gallery-data.json` nomi bilan repo'ga qo'shing va Vercelni qayta deploy qiling.
+- Shunda boshqa qurilmadagi havola ochilganda ham rasmlar ko'rinadi.
+
 ## 🎮 Boshqaruv
 
 | Tugma | Vazifasi |

@@ -133,15 +133,34 @@ export class GalleryStorage {
    * so it gets committed and deployed to other devices automatically!
    */
   async syncAllToDisk() {
+    const all = await this.getAll();
+
     try {
-      const all = await this.getAll();
-      await fetch('/api/save-gallery', {
+      const response = await fetch('/api/save-gallery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(all)
       });
+
+      if (!response.ok) {
+        throw new Error(`Gallery sync endpoint returned ${response.status}`);
+      }
+
+      return true;
     } catch (e) {
-      // Silently ignore if static hosting without node endpoint
+      // Static hosting (e.g. Vercel) cannot write to the repo filesystem from the browser.
+      // Offer a file download so the user can commit public/gallery-data.json and redeploy.
+      const jsonBlob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+      const downloadUrl = URL.createObjectURL(jsonBlob);
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = 'gallery-data.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+
+      throw new Error('Static hosting cannot persist gallery data automatically. The gallery JSON was downloaded to your device. Save it as public/gallery-data.json and redeploy the project so other devices can see the photos.');
     }
   }
 

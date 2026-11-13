@@ -101,8 +101,12 @@ class App {
         onOpenGallery: () => this.galleryManagerModal.open(),
         onInspect: (art) => this.inspectModal.open(art),
         onSyncToAll: async () => {
-          await this.storage.syncAllToDisk();
-          alert("🎉 Barcha yuklangan rasmlar loyiha xotirasiga (public/gallery-data.json) saqlandi!\n\nEndi ushbu loyihani GitHub yoki Vercel ga chiqarsangiz, Zulfiya o'z telefonida ushbu havolani ochganida barcha rasmlarni darhol ko'radi!");
+          try {
+            await this.storage.syncAllToDisk();
+            alert("🎉 Barcha yuklangan rasmlar loyiha xotirasiga (public/gallery-data.json) saqlandi!\n\nEndi ushbu loyihani GitHub yoki Vercel ga chiqarsangiz, Zulfiya o'z telefonida ushbu havolani ochganida barcha rasmlarni darhol ko'radi!");
+          } catch (error) {
+            alert(error.message + "\n\nFayl avtomatik yuklab olindi. Uni public/gallery-data.json sifatida GitHubga qo'shib, qayta deploy qiling.");
+          }
         }
       }
     );
