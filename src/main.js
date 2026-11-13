@@ -25,7 +25,7 @@ class App {
   async init() {
     // 1. Romantic Date-based Lock Screen (Password: 11-noyabr 2026yil)
     this.lockScreen = new LockScreen(() => {
-      // Unlocked callback
+      // Unlocked
     });
 
     // 2. Storage
@@ -99,7 +99,11 @@ class App {
       {
         onOpenUpload: () => this.uploadModal.open(),
         onOpenGallery: () => this.galleryManagerModal.open(),
-        onInspect: (art) => this.inspectModal.open(art)
+        onInspect: (art) => this.inspectModal.open(art),
+        onSyncToAll: async () => {
+          await this.storage.syncAllToDisk();
+          alert("🎉 Barcha yuklangan rasmlar loyiha xotirasiga (public/gallery-data.json) saqlandi!\n\nEndi ushbu loyihani GitHub yoki Vercel ga chiqarsangiz, Zulfiya o'z telefonida ushbu havolani ochganida barcha rasmlarni darhol ko'radi!");
+        }
       }
     );
 

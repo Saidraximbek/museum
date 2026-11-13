@@ -22,13 +22,11 @@ export class HUD {
     this.container.innerHTML = `
       <!-- Sleek Compact Top Bar -->
       <header class="hud-top-bar">
-        <!-- Brand Title Pill -->
         <div class="hud-brand-compact">
           <span class="hud-logo">💖</span>
           <span class="hud-title-text">Zulfiya & Men</span>
         </div>
 
-        <!-- Single Dropdown Menu Button -->
         <div class="hud-menu-container">
           <button class="btn-menu-trigger" id="btnMenuTrigger" aria-label="Menyu">
             <span class="menu-icon">☰</span>
@@ -55,6 +53,14 @@ export class HUD {
                 <div class="item-text">
                   <strong>Xotiralar Albomi</strong>
                   <small>Barcha 22 ta suratlar</small>
+                </div>
+              </button>
+
+              <button class="dropdown-item" id="menuItemSync">
+                <span class="item-icon">🌐</span>
+                <div class="item-text">
+                  <strong>Barcha Qurilmalar Uchun Saqlash</strong>
+                  <small>Zulfiyaning telefonida ko'rinishi uchun</small>
                 </div>
               </button>
 
@@ -102,7 +108,7 @@ export class HUD {
         </div>
       </header>
 
-      <!-- Minimap Popup Dialog (Opens only when chosen in dropdown) -->
+      <!-- Minimap Popup Dialog -->
       <div class="minimap-modal-overlay hidden" id="minimapModal">
         <div class="minimap-popup">
           <div class="minimap-popup-header">
@@ -221,33 +227,37 @@ export class HUD {
   }
 
   attachEvents() {
-    // Dropdown toggle
     this.btnMenuTrigger.addEventListener('click', (e) => {
       e.stopPropagation();
       soundManager.playClick();
       this.toggleMenu();
     });
 
-    // Close dropdown on click outside
     document.addEventListener('click', (e) => {
       if (!this.menuDropdown.contains(e.target) && e.target !== this.btnMenuTrigger) {
         this.closeMenu();
       }
     });
 
-    // Menu Item: Upload
     document.getElementById('menuItemUpload').addEventListener('click', () => {
       this.closeMenu();
       if (this.callbacks.onOpenUpload) this.callbacks.onOpenUpload();
     });
 
-    // Menu Item: Gallery
     document.getElementById('menuItemGallery').addEventListener('click', () => {
       this.closeMenu();
       if (this.callbacks.onOpenGallery) this.callbacks.onOpenGallery();
     });
 
-    // Menu Item: Minimap Modal
+    // Save for all devices (Sync to public/gallery-data.json)
+    document.getElementById('menuItemSync').addEventListener('click', async () => {
+      this.closeMenu();
+      soundManager.playClick();
+      if (this.callbacks.onSyncToAll) {
+        await this.callbacks.onSyncToAll();
+      }
+    });
+
     document.getElementById('menuItemMinimap').addEventListener('click', () => {
       this.closeMenu();
       this.openMinimap();
@@ -261,14 +271,12 @@ export class HUD {
       if (e.target === this.minimapModal) this.closeMinimap();
     });
 
-    // Menu Item: Music
     document.getElementById('menuItemMusic').addEventListener('click', () => {
       const isPlaying = soundManager.toggleMusic();
       this.menuMusicIcon.textContent = isPlaying ? '🔊' : '🔇';
       this.menuMusicText.textContent = isPlaying ? 'Musiqa: Yangramoqda' : 'Musiqa: O\'chirilgan';
     });
 
-    // Menu Item: Lighting
     document.getElementById('menuItemLighting').addEventListener('click', () => {
       soundManager.playClick();
       const moods = ['day', 'sunset', 'night'];
@@ -285,14 +293,12 @@ export class HUD {
       this.menuLightingText.textContent = labels[nextMood].text;
     });
 
-    // Menu Item: Camera
     document.getElementById('menuItemCamera').addEventListener('click', () => {
       soundManager.playClick();
       this.characterController.toggleCameraMode();
       this.closeMenu();
     });
 
-    // Menu Item: Help
     document.getElementById('menuItemHelp').addEventListener('click', () => {
       soundManager.playClick();
       this.closeMenu();
@@ -311,7 +317,6 @@ export class HUD {
       if (e.target === this.helpModal) this.helpModal.classList.add('hidden');
     });
 
-    // Proximity inspect button
     this.btnProximityInspect.addEventListener('click', () => {
       if (this.nearestArtwork && this.callbacks.onInspect) {
         this.callbacks.onInspect(this.nearestArtwork);
@@ -327,7 +332,6 @@ export class HUD {
       }
     });
 
-    // Minimap fast travel
     const travelBtns = this.minimapModal.querySelectorAll('.travel-btn');
     travelBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -417,14 +421,12 @@ export class HUD {
     ctx.lineWidth = 2;
     ctx.strokeRect(pTopLeft.x, pTopLeft.y, roomW, roomH);
 
-    // Center Twin Hearts
     const pCenter = this.worldToMap(0, 0);
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('❤️', pCenter.x, pCenter.y);
 
-    // Artwork markers
     this.artworkManager.artworks.forEach(art => {
       const pos = this.worldToMap(art.mesh.position.x, art.mesh.position.z);
       ctx.fillStyle = art.data.isUserUploaded ? '#f43f5e' : '#fbbf24';
@@ -433,10 +435,8 @@ export class HUD {
       ctx.fill();
     });
 
-    // Player (Zulfiya)
     const p = this.worldToMap(playerPos.x, playerPos.z);
 
-    // View cone
     ctx.fillStyle = 'rgba(244, 63, 94, 0.35)';
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
@@ -445,7 +445,6 @@ export class HUD {
     ctx.closePath();
     ctx.fill();
 
-    // Player marker
     ctx.fillStyle = '#fb7185';
     ctx.beginPath();
     ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
