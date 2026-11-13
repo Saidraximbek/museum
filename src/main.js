@@ -11,7 +11,7 @@ import { InspectModal } from './ui/InspectModal.js';
 import { GalleryManagerModal } from './ui/GalleryManagerModal.js';
 import { HUD } from './ui/HUD.js';
 import { TouchControls } from './ui/TouchControls.js';
-import { soundManager } from './museum/SoundManager.js';
+import { LockScreen } from './ui/LockScreen.js';
 
 class App {
   constructor() {
@@ -23,26 +23,31 @@ class App {
   }
 
   async init() {
-    // 1. Storage
+    // 1. Romantic Date-based Lock Screen (Password: 11-noyabr 2026yil)
+    this.lockScreen = new LockScreen(() => {
+      // Unlocked callback
+    });
+
+    // 2. Storage
     this.storage = new GalleryStorage();
     await this.storage.init();
 
-    // 2. Scene, Camera, Renderer
+    // 3. Scene, Camera, Renderer
     this.sceneManager = new SceneManager(this.canvasContainer);
 
-    // 3. Museum Architecture
+    // 4. Museum Architecture
     this.architecture = new MuseumArchitecture(this.sceneManager.scene);
 
-    // 4. Artwork Manager with High-Resolution Renderer Capabilities
+    // 5. Artwork Manager with High-Resolution Renderer Capabilities
     this.artworkManager = new ArtworkManager(this.sceneManager.scene, this.sceneManager.renderer);
     const artworks = await this.storage.getAll();
     await this.artworkManager.loadArtworks(artworks);
 
-    // 5. Controllable Hijabi Girl Avatar: Zulfiya
+    // 6. Controllable Hijabi Girl Avatar: Zulfiya
     this.character = new CharacterGirl();
     this.sceneManager.scene.add(this.character.mesh);
 
-    // 6. Character Controller & Camera Follow
+    // 7. Character Controller & Camera Follow
     this.controller = new CharacterController(
       this.character,
       this.sceneManager.camera,
@@ -50,7 +55,7 @@ class App {
       this.architecture
     );
 
-    // 7. Modals
+    // 8. Modals
     this.uploadModal = new UploadModal(
       this.storage,
       this.artworkManager,
@@ -86,7 +91,7 @@ class App {
       }
     );
 
-    // 8. HUD & Minimap
+    // 9. HUD with Clean Dropdown Menu
     this.hud = new HUD(
       this.controller,
       this.artworkManager,
@@ -98,7 +103,7 @@ class App {
       }
     );
 
-    // 9. Mobile Touch Scroll & Controls
+    // 10. Mobile Touch Scroll & Controls
     this.touchControls = new TouchControls(
       this.controller,
       () => {
@@ -108,10 +113,10 @@ class App {
       }
     );
 
-    // 10. Click directly on paintings to inspect
+    // 11. Click directly on paintings to inspect
     this.setupPaintingClick();
 
-    // 11. Drag and Drop images directly onto window
+    // 12. Drag and Drop images directly onto window
     this.setupWindowDragAndDrop();
 
     // Start render loop
